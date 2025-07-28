@@ -22,14 +22,6 @@ const wss = new WebSocket.Server({ port: 5232 });
 export const clients: { [key: string]: { user: User, client } } = {};
 wss.on("connection", async (ws, req) => {
   const user: User = JSON.parse(await users.get(req.headers["authorization"].slice(4)));
-  //if (user.user_name != "device:Windows-891E7D5A46D5EB2751C50034A345D49E65" && user.user_name != "device:Android-344049DB1EC34EA2A7D5738740DB9F8E") ws.send(JSON.stringify({
-  //  message: "停服更新",
-  //  channel: "disconnect",
-  //  context: null,
-  //  timestamp: "",
-  //  sender: "Server",
-  //  receiver: null
-  //}));
   clients[user.id] = { user, client: ws };
   ws.on("message", (m: Buffer) => {
     const msg: {
