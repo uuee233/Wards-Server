@@ -4,6 +4,7 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 import * as express from 'express';
 import { WebSocket } from 'ws';
 import { User, users } from './user';
+import { port, ws_port } from './config';
 
 async function bootstrap() {
   const server = express();
@@ -14,11 +15,11 @@ async function bootstrap() {
     AppModule,
     new ExpressAdapter(server)
   );
-  await app.listen(5231);
+  await app.listen(port);
 }
 bootstrap();
 
-const wss = new WebSocket.Server({ port: 5232 });
+const wss = new WebSocket.Server({ port: ws_port });
 export const clients: { [key: string]: { user: User, client } } = {};
 wss.on("connection", async (ws, req) => {
   const user: User = JSON.parse(await users.get(req.headers["authorization"].slice(4)));
