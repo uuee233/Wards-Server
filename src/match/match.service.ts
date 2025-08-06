@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { LobbyPlayer, MatchAction, MatchCard, MatchInfo, MulliganCards } from './match.dto';
 import { Deck, User, users } from 'src/user';
-import { server_address } from 'src/config';
+import { ban_cheat, server_address } from 'src/config';
 import { clients } from 'src/main';
 
 @Injectable()
@@ -143,7 +143,7 @@ export class MatchService {
 
     processMatch(match_id: number, action: MatchAction, player: User) {
         const match = MatchService.matchedPairs[match_id];
-        if (action.action_type == "XActionCheat" && player.user_name != "device:Windows-891E7D5A46D5EB2751C50034A345D49E65") {
+        if (ban_cheat && action.action_type == "XActionCheat") {
             clients[player.id].client.send(JSON.stringify({
                 message: "该账户已被封禁",
                 channel: "disconnect",
@@ -177,7 +177,7 @@ export class MatchService {
         const match = MatchService.matchedPairs[match_id];
         const result: any = {};
         const actions = match.getActionsById(player.id);
-        if (actions.length != 0 && actions.findIndex((a) => a.action_id == body.min_action_id || a.action) != -1 && actions.sort((a, b) => a.action_id - b.action_id).every((a, i) => i == 0 || a.action_id - 1 == actions[i - 1].action_id)) result.actions = match.getActionsById(player.id).splice(0);
+        if (actions.length != 0 && actions.findIndex((a) => a.action_id == body.min_action_id || a.action) != -1 && actions.sort((a, b) => a.action_id - b.action_id).every((a, i) => a.action || i == 0 || a.action_id - 1 == actions[i - 1].action_id)) result.actions = match.getActionsById(player.id).splice(0);
         result.match = {
             player_status_left: match.player_status_left,
             player_status_right: match.player_status_right,
@@ -197,7 +197,7 @@ export class MatchService {
                 },
                 "action_id": match.left.player_id == player.id ? match.right_minactionid + 1 : match.left_minactionid + 1,
                 "local_subactions": 1
-            }]
+            }].concat(result.actions);
             result.match = {
                 player_status_left: "mulligan_done",
                 player_status_right: "mulligan_done",

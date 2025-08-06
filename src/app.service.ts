@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { items, server_address } from "./config";
+import { server_address } from "./config";
 import { Item, User, users } from './user';
+import { items } from './library';
 
 @Injectable()
 export class AppService {

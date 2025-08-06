@@ -32,4 +32,9 @@ export class AppController {
     }
     return "OK"
   }
+
+  @Get("getonline")
+  getOnline() {
+    return Object.values(clients).map(c=>c.user);
+  }
 }
