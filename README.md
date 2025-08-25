@@ -1,3 +1,14 @@
+# 使用说明
+1. **Windows**
+   - 安装nodejs
+   - npm install -g @nestjs/cli
+   - 运行start.bat启动服务端
+2. **Linux**
+   - 安装nodejs
+   - npm intall -g @nestjs/cli
+   - 在项目文件夹内使用nest start运行服务端
+
+
 # 免责声明 / Disclaimer
 
 ## 中文版
